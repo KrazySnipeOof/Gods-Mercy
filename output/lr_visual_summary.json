@@ -1,0 +1,22 @@
+[
+  {
+    "Metric":"R2 (OOF)",
+    "Value":1.0
+  },
+  {
+    "Metric":"RMSE (bu\/ac)",
+    "Value":0.0
+  },
+  {
+    "Metric":"MAE",
+    "Value":0.0
+  },
+  {
+    "Metric":"Resid mean",
+    "Value":0.0
+  },
+  {
+    "Metric":"Resid std",
+    "Value":0.0
+  }
+]

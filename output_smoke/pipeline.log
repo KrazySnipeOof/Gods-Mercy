@@ -86,3 +86,7 @@
 2026-03-28 11:36:06,087 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===
 2026-03-28 11:37:37,331 [INFO] OOF train metrics: {'rmse': 35.148401132270834, 'mae': 27.3775182346343, 'r2': 0.0353438563421018}
 2026-03-28 11:37:38,662 [INFO] === Step 7b: Phase B booster + env/year holdout early stopping ===
+2026-03-28 11:42:07,627 [INFO] === Step 9: Top-k per environment ===
+2026-03-28 11:42:07,647 [INFO] === Step 10: Permutation importance + buckets ===
+2026-03-28 11:42:40,286 [INFO] === Step 9: Top-k per environment ===
+2026-03-28 11:42:40,308 [INFO] === Step 10: Permutation importance + buckets ===
