@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+
+# Large generated datasets (exceed GitHub 100MB per-file limit; regenerate via pipeline)
+output/full_dataset.csv
+output/genotypes_c1.csv
+output/pheno_env.csv
+output_smoke/full_dataset.csv
+output_smoke/pheno_env.csv

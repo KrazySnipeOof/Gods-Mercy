@@ -1,0 +1,86 @@
+2026-03-28 10:54:11,538 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 10:54:24,936 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 10:54:26,739 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 10:56:47,596 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output_smoke\pheno_env.csv
+2026-03-28 10:56:47,598 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 10:57:13,166 [INFO] Genotype matrix: 5784 lines, 400 SNPs -> C:\Users\kensm\Gods-Mercy\output_smoke\genotypes_c1.csv
+2026-03-28 10:57:13,171 [INFO] === Step 3: Validate joins ===
+2026-03-28 10:57:13,630 [INFO] Unique phenotype lines: 76705
+2026-03-28 10:57:13,630 [INFO] Unique genotype lines: 5784
+2026-03-28 10:57:13,634 [INFO] Overlap lines: 5784 (7.54% of pheno lines)
+2026-03-28 10:57:56,222 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 10:58:08,043 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 10:58:09,268 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 11:00:03,260 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output_smoke\pheno_env.csv
+2026-03-28 11:00:03,261 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 11:00:24,068 [INFO] Genotype matrix: 5784 lines, 400 SNPs -> C:\Users\kensm\Gods-Mercy\output_smoke\genotypes_c1.csv
+2026-03-28 11:00:24,070 [INFO] === Step 3: Validate joins ===
+2026-03-28 11:00:28,239 [INFO] Genotype subset mode: evaluating coverage among 5784 pheno lines in loaded populations only
+2026-03-28 11:00:28,240 [INFO] Unique phenotype lines: 76705
+2026-03-28 11:00:28,240 [INFO] Unique genotype lines: 5784
+2026-03-28 11:00:28,240 [INFO] Overlap lines: 5784 (100.00% of evaluation set)
+2026-03-28 11:00:28,403 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 11:00:28,491 [INFO] Top unmatched pheno line_ids: ['C1.1.1', 'C1.1.10', 'C1.1.100', 'C1.1.101', 'C1.1.102', 'C1.1.103', 'C1.1.104', 'C1.1.105', 'C1.1.106', 'C1.1.107']
+2026-03-28 11:00:28,491 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 11:00:30,188 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 11:02:51,390 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 11:02:55,263 [INFO] Modeling rows: 8000 (train-year subset + test year)
+2026-03-28 11:02:55,263 [INFO] === Step 5: Environment covariates ===
+2026-03-28 11:02:58,872 [INFO] Ridge SNP baseline fit on 8000 train rows
+2026-03-28 11:02:58,889 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 11:04:02,996 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 11:08:40,756 [INFO] Best GBR params: {'subsample': 0.75, 'n_estimators': 300, 'max_depth': 4, 'learning_rate': 0.03}
+2026-03-28 11:08:40,756 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===
+2026-03-28 11:09:50,674 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 11:10:06,743 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 11:10:10,310 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 11:10:38,000 [INFO] OOF train metrics: {'rmse': 29.33768343856679, 'mae': 23.061276290416544, 'r2': 0.2083859040974685}
+2026-03-28 11:10:43,966 [INFO] === Step 7b: Phase B booster + env/year holdout early stopping ===
+2026-03-28 11:13:50,996 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output_smoke\pheno_env.csv
+2026-03-28 11:13:51,009 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 11:14:06,629 [INFO] === Step 9: Top-k per environment ===
+2026-03-28 11:14:06,651 [INFO] === Step 10: Permutation importance + buckets ===
+2026-03-28 11:14:44,074 [INFO] Genotype matrix: 5448 lines, 400 SNPs -> C:\Users\kensm\Gods-Mercy\output_smoke\genotypes_c1.csv
+2026-03-28 11:14:44,080 [INFO] === Step 3: Validate joins ===
+2026-03-28 11:14:44,336 [INFO] Done. Artifacts in C:\Users\kensm\Gods-Mercy\output_smoke
+2026-03-28 11:14:49,793 [INFO] Genotype subset mode: evaluating coverage among 5448 pheno lines in loaded populations only
+2026-03-28 11:14:49,794 [INFO] Unique phenotype lines: 76705
+2026-03-28 11:14:49,794 [INFO] Unique genotype lines: 5448
+2026-03-28 11:14:49,794 [INFO] Overlap lines: 5448 (100.00% of evaluation set)
+2026-03-28 11:14:49,958 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 11:14:50,056 [INFO] Top unmatched pheno line_ids: ['C1.100.100', 'C1.100.101', 'C1.100.102', 'C1.100.103', 'C1.100.104', 'C1.100.105', 'C1.100.106', 'C1.100.107', 'C1.100.108', 'C1.100.109']
+2026-03-28 11:14:50,056 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 11:14:51,854 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 11:17:22,185 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 11:17:25,148 [INFO] Modeling rows: 8000 (train-year subset + test year)
+2026-03-28 11:17:25,148 [INFO] === Step 5: Environment covariates ===
+2026-03-28 11:17:26,416 [INFO] Ridge SNP baseline fit on 8000 train rows
+2026-03-28 11:17:26,440 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 11:18:06,415 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 11:24:46,332 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 11:24:55,714 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 11:24:58,324 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 11:28:53,213 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output_smoke\pheno_env.csv
+2026-03-28 11:28:53,219 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 11:29:30,722 [INFO] Genotype matrix: 5448 lines, 400 SNPs -> C:\Users\kensm\Gods-Mercy\output_smoke\genotypes_c1.csv
+2026-03-28 11:29:30,724 [INFO] === Step 3: Validate joins ===
+2026-03-28 11:29:33,779 [INFO] Genotype subset mode: evaluating coverage among 5448 pheno lines in loaded populations only
+2026-03-28 11:29:33,779 [INFO] Unique phenotype lines: 76705
+2026-03-28 11:29:33,779 [INFO] Unique genotype lines: 5448
+2026-03-28 11:29:33,779 [INFO] Overlap lines: 5448 (100.00% of evaluation set)
+2026-03-28 11:29:33,968 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 11:29:34,013 [INFO] Top unmatched pheno line_ids: ['C1.100.100', 'C1.100.101', 'C1.100.102', 'C1.100.103', 'C1.100.104', 'C1.100.105', 'C1.100.106', 'C1.100.107', 'C1.100.108', 'C1.100.109']
+2026-03-28 11:29:34,014 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 11:29:35,441 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 11:31:11,898 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 11:31:14,063 [INFO] Modeling rows: 8000 (train-year subset + test year)
+2026-03-28 11:31:14,063 [INFO] === Step 5: Environment covariates ===
+2026-03-28 11:31:15,208 [INFO] Ridge SNP baseline fit on 8000 train rows
+2026-03-28 11:31:15,224 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 11:31:59,459 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 11:31:59,461 [INFO] Skipping RandomizedSearchCV (small train or skip_random_search); using config gbr params {'n_estimators': 200, 'max_depth': 5, 'learning_rate': 0.05, 'subsample': 0.8}
+2026-03-28 11:31:59,462 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===
+2026-03-28 11:33:16,952 [INFO] OOF train metrics: {'rmse': 35.341960892955505, 'mae': 27.722361324031436, 'r2': 0.024690015519868047}
+2026-03-28 11:33:18,025 [INFO] === Step 7b: Phase B booster + env/year holdout early stopping ===
+2026-03-28 11:36:06,085 [INFO] Best GBR params: {'subsample': 0.75, 'n_estimators': 300, 'max_depth': 4, 'learning_rate': 0.03}
+2026-03-28 11:36:06,087 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===

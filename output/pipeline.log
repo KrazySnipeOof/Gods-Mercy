@@ -1,0 +1,58 @@
+2026-03-28 10:47:04,253 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 10:47:09,786 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 10:47:10,182 [WARNING] Duplicate grain rows: 2924 — dropping duplicates (keep first)
+2026-03-28 10:47:59,100 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 10:47:59,100 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 10:48:06,901 [INFO] Loaded 50/499 population files
+2026-03-28 10:48:18,218 [INFO] Loaded 100/499 population files
+2026-03-28 10:48:29,367 [INFO] Loaded 150/499 population files
+2026-03-28 10:48:36,067 [INFO] Loaded 200/499 population files
+2026-03-28 10:48:43,162 [INFO] Loaded 250/499 population files
+2026-03-28 10:48:50,253 [INFO] Loaded 300/499 population files
+2026-03-28 10:48:57,393 [INFO] Loaded 350/499 population files
+2026-03-28 10:49:09,541 [INFO] Loaded 400/499 population files
+2026-03-28 10:49:20,699 [INFO] Loaded 450/499 population files
+2026-03-28 10:52:49,105 [INFO] Genotype matrix: 76705 lines, 2500 SNPs → C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 10:52:49,259 [INFO] === Step 3: Validate joins ===
+2026-03-28 10:52:49,586 [INFO] Unique phenotype lines: 77372
+2026-03-28 10:52:49,586 [INFO] Unique genotype lines: 76705
+2026-03-28 10:52:49,587 [INFO] Overlap lines: 67743 (87.55% of pheno lines)
+2026-03-28 10:52:49,675 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 10:52:49,699 [INFO] Top unmatched pheno line_ids: ['C1.114.00000000001', 'C1.114.00000000002', 'C1.114.00000000003', 'C1.114.00000000004', 'C1.114.00000000005', 'C1.114.00000000006', 'C1.114.00000000007', 'C1.114.00000000009', 'C1.114.00000000010', 'C1.114.00000000011']
+2026-03-28 10:52:49,699 [INFO] Top unmatched geno line_ids (sample): ['C1.114.15', 'C1.114.173', 'C1.114.183', 'C1.114.36', 'C1.115.1003', 'C1.115.1004', 'C1.115.1005', 'C1.115.1007', 'C1.115.1008', 'C1.115.1010']
+2026-03-28 10:52:51,178 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 10:53:41,260 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 10:53:46,128 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 10:53:46,128 [INFO] === Step 5: Environment covariates ===
+2026-03-28 10:53:57,181 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 10:53:57,254 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 10:54:28,358 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 11:00:55,545 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 11:01:08,595 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 11:01:11,332 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 11:03:40,044 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 11:03:40,109 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 11:04:28,369 [INFO] Loaded 50/499 population files
+2026-03-28 11:05:50,227 [INFO] Loaded 100/499 population files
+2026-03-28 11:06:34,486 [INFO] Loaded 150/499 population files
+2026-03-28 11:07:10,634 [INFO] Loaded 200/499 population files
+2026-03-28 11:07:47,585 [INFO] Loaded 250/499 population files
+2026-03-28 11:08:23,377 [INFO] Loaded 300/499 population files
+2026-03-28 11:08:53,759 [INFO] Loaded 350/499 population files
+2026-03-28 11:09:23,576 [INFO] Loaded 400/499 population files
+2026-03-28 11:10:00,305 [INFO] Loaded 450/499 population files
+2026-03-28 11:21:41,385 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 11:21:42,169 [INFO] === Step 3: Validate joins ===
+2026-03-28 11:21:42,965 [INFO] Unique phenotype lines: 76705
+2026-03-28 11:21:42,968 [INFO] Unique genotype lines: 76705
+2026-03-28 11:21:42,971 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 11:21:43,661 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 11:21:43,694 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 11:21:43,697 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 11:21:48,679 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 11:23:28,311 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 11:23:36,540 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 11:23:36,566 [INFO] === Step 5: Environment covariates ===
+2026-03-28 11:24:11,616 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 11:24:11,865 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 11:25:23,545 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===

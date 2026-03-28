@@ -1,0 +1,40 @@
+{
+  "decision_support_statement": "A model that predicts maize yield using genetic and environmental data to help select the best lines under limited resources.",
+  "strategy": "Option B - environment-specific prediction with genotype, environment, and past traits.",
+  "why_environment_specific": [
+    "More realistic for breeding decisions because selections are made per target environment.",
+    "Captures local adaptation by allowing environment-specific ranking outcomes.",
+    "Improves targeted recommendations for each location-year combination.",
+    "Better handles genotype-by-environment effects via explicit GxE interaction features and grouped validation."
+  ],
+  "dataset_shape": {
+    "n_rows": 97,
+    "n_features": 443
+  },
+  "target_column": "YLD_BE",
+  "phenotype_path_used": "C:\\Users\\kensm\\Downloads\\sample_data\\sample_C1_phenotype_100rows.csv",
+  "environment_path_used": "C:\\Users\\kensm\\Downloads\\sample_data\\sample_environmental_20rows.csv",
+  "genomic_path_used": "C:\\Users\\kensm\\Downloads\\sample_data\\sample_C1.1_100rows.csv",
+  "baseline_grouped_cv_metrics": {
+    "rmse": 92.70698997592774,
+    "mae": 49.577713218280806,
+    "r2": -19.79604637793629
+  },
+  "final_grouped_cv_metrics": {
+    "rmse": 22.4030106318949,
+    "mae": 17.24625274304718,
+    "r2": -0.21441909182408936
+  },
+  "model_comparison": {
+    "rmse_improvement": 70.30397934403284,
+    "mae_improvement": 32.33146047523363,
+    "r2_improvement": 19.581627286112198
+  },
+  "outputs": {
+    "prediction_results": "outputs\\prediction_results.csv",
+    "ranked_candidates_per_environment": "outputs\\ranked_candidates_per_environment.csv",
+    "feature_importance_model_gain": "outputs\\feature_importance_model_gain.csv",
+    "feature_importance_permutation": "outputs\\feature_importance_permutation.csv",
+    "environment_level_metrics": "outputs\\environment_level_metrics.csv"
+  }
+}

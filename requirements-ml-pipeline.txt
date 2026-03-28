@@ -1,0 +1,10 @@
+# Maize GxE pipeline (maize_gxe_ml_pipeline.py)
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+PyYAML>=6.0
+matplotlib>=3.7
+joblib>=1.3
+# Optional (enable in pipeline_config.yaml)
+# xgboost>=2.0
+# shap>=0.44

@@ -1,0 +1,56 @@
+# Fast smoke test — inherits logic; small limits
+cohort: C1
+paths:
+  pheno_c1: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/C1_Phenotype_Data_V2.csv"
+  pheno_c2: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/C2_Phenotype_Data_V2.csv"
+  environmental: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/environmental_features.csv"
+  imputed_c1_dir: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/ImputedC1Populations/ImputedPopulationsC1"
+  imputed_c2_dir: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/ImputedC2Populations/ImputedPopulationsC2"
+
+years:
+  train_min: 2001
+  train_max: 2007
+  test_year: 2008
+
+target_col: YLD_BE
+alt_targets_note: "PHT, MST"
+
+hypers:
+  pca_components: 30
+  ridge_alpha: 0.01
+  gbr:
+    n_estimators: 200
+    max_depth: 5
+    learning_rate: 0.05
+    subsample: 0.8
+  random_search_iter: 6
+  group_cv_splits: 3
+  hist_gb:
+    max_iter: 200
+    max_depth: 6
+    learning_rate: 0.08
+  early_stopping_rounds: 20
+
+max_train_rows: 8000
+max_rows_per_env: 120
+genotype_max_snps: 400
+genotype_max_pop_files: 35
+
+env_scaling: global
+
+topk: 5
+min_geno_match_rate: 0.70
+min_pheno_env_match_rate: 0.80
+nan_col_drop_frac: 0.50
+max_env_features_gxe: 15
+n_interaction_pairs: 6
+
+use_xgboost: false
+use_shap: false
+bootstrap_uncertainty_n: 20
+random_state: 42
+
+output_dir: output_smoke
+sklearn_n_jobs: 1
+skip_random_search: true
+save_full_dataset_csv: false

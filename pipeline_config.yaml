@@ -1,0 +1,62 @@
+# Maize GxE yield pipeline — paths relative to this file or absolute.
+cohort: C1
+paths:
+  pheno_c1: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/C1_Phenotype_Data_V2.csv"
+  pheno_c2: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/C2_Phenotype_Data_V2.csv"
+  environmental: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/environmental_features.csv"
+  imputed_c1_dir: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/ImputedC1Populations/ImputedPopulationsC1"
+  imputed_c2_dir: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/ImputedC2Populations/ImputedPopulationsC2"
+
+years:
+  train_min: 2001
+  train_max: 2007
+  test_year: 2008
+
+target_col: YLD_BE
+alt_targets_note: "PHT=plant height, MST=moisture; primary yield is YLD_BE (bushels/acre)."
+
+hypers:
+  pca_components: 50
+  ridge_alpha: 0.01
+  gbr:
+    n_estimators: 500
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+  random_search_iter: 50
+  group_cv_splits: 5
+  hist_gb:
+    max_iter: 1000
+    max_depth: 8
+    learning_rate: 0.05
+  early_stopping_rounds: 50
+
+# Speed / scale (set null for no limit). Subsampling keeps logic valid for hackathon runtime.
+max_train_rows: 45000
+max_rows_per_env: 400
+genotype_max_snps: 2500
+genotype_max_pop_files: null
+
+env_scaling: global  # documented: global StandardScaler for tree+linear-friendly matrix; trees are scale-invariant after linear blocks scaled.
+
+topk: 10
+min_geno_match_rate: 0.70
+min_pheno_env_match_rate: 0.80
+nan_col_drop_frac: 0.50
+max_env_features_gxe: 20
+n_interaction_pairs: 10
+
+use_xgboost: false
+# GPU pipeline (output/maize_gxe_ml_pipeline_gpu.py) + linear_regression_gpu_baseline.ipynb
+use_gpu: true
+cuda_device: 0
+artifact_suffix: "_gpu"
+use_shap: true
+bootstrap_uncertainty_n: 20
+random_state: 42
+
+output_dir: output
+# Windows: use 1 to avoid joblib/loky hangs; Linux/Colab can set -1
+sklearn_n_jobs: 1
+skip_random_search: false
+save_full_dataset_csv: true
