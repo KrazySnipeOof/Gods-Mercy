@@ -1,0 +1,126 @@
+# Phase B ù HistGradientBoosting or optional XGBoost with early stopping
+log_step("Step 7b: Phase B booster + env/year holdout early stopping")
+X_tr = X_all[train_idx]
+y_tr = y_all[train_idx]
+te_idx = model_df["YEAR"].values == te_year
+X_va = X_all[te_idx]
+y_va = y_all[te_idx]
+
+hgb: Any
+if cfg.get("use_xgboost", False):
+    try:
+        import xgboost as xgb
+
+        esr = int(hypers.get("early_stopping_rounds", 50))
+        hgb = xgb.XGBRegressor(
+            n_estimators=int(hypers["hist_gb"]["max_iter"]),
+            max_depth=int(hypers["hist_gb"]["max_depth"]),
+            learning_rate=float(hypers["hist_gb"]["learning_rate"]),
+            subsample=0.8,
+            random_state=42,
+            n_jobs=-1,
+        )
+        if len(X_va) >= 20:
+            hgb.fit(
+                X_tr,
+                y_tr,
+                eval_set=[(X_va, y_va)],
+                verbose=False,
+                early_stopping_rounds=esr,
+            )
+        else:
+            hgb.fit(X_tr, y_tr)
+        except ImportError as e:
+            raise RuntimeError("GPU XGBoost required for hackathon speed û check CUDA install & VRAM. CPU too slow for SNPs.") from e
+
+joblib.dump(hgb, out / "best_model.pkl")
+
+model_df["pred_final"] = hgb.predict(X_all)
+oof_path = out / "oof_preds.csv"
+model_df[["line_id", "env_id", "YEAR", "LOC", "YLDBE", "oof_pred", "pred_final"]].to_csv(
+    oof_path, index=False
+)
+
+# Step 9 ranking
+log_step("Step 9: Top-k per environment")
+topk = int(cfg.get("topk", 10))
+rank_rows = []
+for env_id, chunk in model_df.loc[te_idx].groupby("env_id"):
+    sub = chunk.sort_values("pred_final", ascending=False).head(topk).copy()
+    sub["rank"] = np.arange(1, len(sub) + 1)
+    sub["uncertainty_oof_rmse"] = glob_metrics["rmse"]
+    rank_rows.append(sub)
+rankings = pd.concat(rank_rows, axis=0) if rank_rows else pd.DataFrame()
+rankings.to_csv(out / "rankings_topk_per_env.csv", index=False)
+
+# Step 10 interpretation
+log_step("Step 10: Permutation importance + buckets")
+perm = permutation_importance(
+    hgb,
+    X_tr,
+    y_tr,
+    n_repeats=10,
+    random_state=42,
+    n_jobs=int(cfg.get("sklearn_n_jobs", 1)),
+)
+fi = pd.DataFrame({"feature": feature_cols, "importance_mean": perm.importances_mean, "importance_std": perm.importances_std})
+fi = fi.sort_values("importance_mean", ascending=False)
+fi.to_csv(out / "perm_importance.csv", index=False)
+
+
+def bucket(name: str) -> str:
+    if name.startswith("GPC_"):
+        return "Genetic_PCA"
+    if name.startswith("GXE__"):
+        return "GxE_interaction"
+    if any(x in name.upper() for x in ("PRCP", "TAVG", "HTDD", "CLDD", "DP01", "DP10")):
+        return "Weather"
+    if any(x in name.upper() for x in ("CLAY", "SILT", "SAND", "PH", "SOC", "NITROGEN", "CFVO")):
+        return "Soil"
+    if "past_yld" in name:
+        return "Past_pheno"
+    return "Other"
+
+
+fi["bucket"] = fi["feature"].map(bucket)
+bucketed = fi.groupby("bucket")["importance_mean"].sum().reset_index()
+bucketed.to_csv(out / "perm_importance_buckets.csv", index=False)
+fi.head(20).to_csv(out / "interpretation_top_features_slide.csv", index=False)
+
+if cfg.get("use_shap", True):
+    try:
+        import shap
+
+        explainer = shap.Explainer(hgb.predict, X_tr[: min(2000, len(X_tr))])
+        sv = explainer(X_tr[: min(2000, len(X_tr))])
+        shap.summary_plot(sv, feature_names=feature_cols, show=False)
+        plt.tight_layout()
+        plt.savefig(out / "shap.png", dpi=150, bbox_inches="tight")
+        plt.close()
+    except Exception as e:
+        logging.warning("SHAP skipped: %s", e)
+
+# Step 11 summary
+summary = {
+    "cohort": cohort,
+    "join_report": join_report,
+    "modeling_rows": int(len(model_df)),
+    "oof_global_metrics": glob_metrics,
+    "best_gbr_cv_params": search.best_params_,
+    "feature_columns": feature_cols,
+    "paths": {k: str(Path(v)) for k, v in paths.items()},
+}
+
+
+def _json_default(o: Any) -> Any:
+    if isinstance(o, (np.floating, np.integer)):
+        return o.item()
+    return str(o)
+
+
+with open(out / "run_summary.json", "w", encoding="utf-8") as f:
+    json.dump(summary, f, indent=2, default=_json_default)
+
+logging.info("Done. Artifacts in %s", out)
+print(json.dumps(summary, indent=2, default=_json_default))
+

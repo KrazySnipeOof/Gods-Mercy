@@ -1,0 +1,60 @@
+# Fast smoke config to verify Step 7a GPU XGBoost path.
+cohort: C1
+paths:
+  pheno_c1: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/C1_Phenotype_Data_V2.csv"
+  pheno_c2: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/C2_Phenotype_Data_V2.csv"
+  environmental: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/environmental_features.csv"
+  imputed_c1_dir: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/ImputedC1Populations/ImputedPopulationsC1"
+  imputed_c2_dir: "C:/Users/kensm/OneDrive/Desktop/Real Hackathon DataSets/ImputedC2Populations/ImputedPopulationsC2"
+
+years:
+  train_min: 2001
+  train_max: 2007
+  test_year: 2008
+
+target_col: YLD_BE
+
+hypers:
+  pca_components: 30
+  ridge_alpha: 0.01
+  gbr:
+    n_estimators: 200
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+  random_search_iter: 6
+  group_cv_splits: 3
+  hist_gb:
+    max_iter: 200
+    max_depth: 6
+    learning_rate: 0.05
+  early_stopping_rounds: 20
+
+max_train_rows: 3000
+max_rows_per_env: 120
+genotype_max_snps: 1200
+genotype_max_pop_files: 20
+env_scaling: global
+
+topk: 10
+min_geno_match_rate: 0.50
+min_pheno_env_match_rate: 0.50
+nan_col_drop_frac: 0.50
+max_env_features_gxe: 20
+n_interaction_pairs: 10
+
+use_xgboost: false
+use_gpu: true
+cuda_device: 0
+max_snps: 1200
+pca_once: true
+gpu_pca_n_folds: 3
+artifact_suffix: "_gpu_smoke"
+use_shap: false
+bootstrap_uncertainty_n: 5
+random_state: 42
+
+output_dir: output_smoke
+sklearn_n_jobs: 1
+skip_random_search: false
+save_full_dataset_csv: false

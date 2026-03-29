@@ -54,3 +54,15 @@ The script writes:
 - `outputs/baseline_fold_metrics.csv`
 - `outputs/final_fold_metrics.csv`
 - `outputs/run_summary.json`
+
+## GPU Note (Step 7a)
+
+For the maize GxE pipeline (`maize_gxe_ml_pipeline.py`), Step 7a uses GPU-accelerated XGBoost
+for grouped hyperparameter search when `use_gpu: true` (and CUDA + `xgboost` are available).
+If GPU is unavailable, it automatically falls back to sklearn GBR.
+
+To verify GPU activity during Step 7a, run:
+
+```powershell
+nvidia-smi
+```

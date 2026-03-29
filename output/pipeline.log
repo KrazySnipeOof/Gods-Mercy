@@ -56,3 +56,275 @@
 2026-03-28 11:24:11,616 [INFO] Ridge SNP baseline fit on 45000 train rows
 2026-03-28 11:24:11,865 [INFO] === Step 6: GxE feature refinement ===
 2026-03-28 11:25:23,545 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 14:58:31,331 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 14:58:34,157 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 14:58:34,734 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 14:58:57,363 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 14:58:57,396 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 14:59:02,900 [INFO] Loaded 50/499 population files
+2026-03-28 14:59:08,494 [INFO] Loaded 100/499 population files
+2026-03-28 14:59:13,834 [INFO] Loaded 150/499 population files
+2026-03-28 14:59:19,199 [INFO] Loaded 200/499 population files
+2026-03-28 14:59:24,781 [INFO] Loaded 250/499 population files
+2026-03-28 14:59:30,142 [INFO] Loaded 300/499 population files
+2026-03-28 14:59:35,406 [INFO] Loaded 350/499 population files
+2026-03-28 14:59:39,959 [INFO] Loaded 400/499 population files
+2026-03-28 14:59:43,228 [INFO] Loaded 450/499 population files
+2026-03-28 15:02:03,092 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 15:02:03,348 [INFO] === Step 3: Validate joins ===
+2026-03-28 15:02:03,432 [INFO] Unique phenotype lines: 76705
+2026-03-28 15:02:03,433 [INFO] Unique genotype lines: 76705
+2026-03-28 15:02:03,433 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 15:02:03,734 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 15:02:03,744 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 15:02:03,745 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 15:02:04,487 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 15:02:27,061 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 15:02:28,816 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 15:02:28,817 [INFO] === Step 5: Environment covariates ===
+2026-03-28 15:02:32,157 [INFO] GPU SNPs pruned: 2000 (from 2500)
+2026-03-28 15:02:32,179 [INFO] SNP tensor (82522, 2000) on cuda:0 | prep 2.89s
+2026-03-28 15:02:33,570 [INFO] Final GPU PCA fit: 0.24s | k=50
+2026-03-28 15:04:06,744 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 15:04:06,776 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 15:05:21,795 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:01:43,602 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:01:43,604 [WARNING] xgboost import failed; Step 7a will use sklearn GBR CPU fallback.
+2026-03-28 16:01:43,605 [WARNING] use_gpu=true but Step 7a GPU path unavailable (xgboost=False, torch_cuda=True); using sklearn GBR CPU fallback.
+2026-03-28 16:01:43,605 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:02:02,015 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 16:02:05,158 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 16:02:05,781 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 16:02:28,438 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 16:02:28,537 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 16:02:31,547 [INFO] Loaded 50/499 population files
+2026-03-28 16:02:34,466 [INFO] Loaded 100/499 population files
+2026-03-28 16:02:37,497 [INFO] Loaded 150/499 population files
+2026-03-28 16:02:40,941 [INFO] Loaded 200/499 population files
+2026-03-28 16:02:44,276 [INFO] Loaded 250/499 population files
+2026-03-28 16:02:47,488 [INFO] Loaded 300/499 population files
+2026-03-28 16:02:50,654 [INFO] Loaded 350/499 population files
+2026-03-28 16:02:53,415 [INFO] Loaded 400/499 population files
+2026-03-28 16:02:55,935 [INFO] Loaded 450/499 population files
+2026-03-28 16:03:14,347 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 16:03:16,988 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 16:03:17,514 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 16:03:40,698 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 16:03:40,730 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 16:03:43,773 [INFO] Loaded 50/499 population files
+2026-03-28 16:03:46,789 [INFO] Loaded 100/499 population files
+2026-03-28 16:03:50,164 [INFO] Loaded 150/499 population files
+2026-03-28 16:03:53,115 [INFO] Loaded 200/499 population files
+2026-03-28 16:03:56,469 [INFO] Loaded 250/499 population files
+2026-03-28 16:03:59,782 [INFO] Loaded 300/499 population files
+2026-03-28 16:04:02,851 [INFO] Loaded 350/499 population files
+2026-03-28 16:04:05,635 [INFO] Loaded 400/499 population files
+2026-03-28 16:04:08,093 [INFO] Loaded 450/499 population files
+2026-03-28 16:06:54,493 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 16:06:54,698 [INFO] === Step 3: Validate joins ===
+2026-03-28 16:06:54,791 [INFO] Unique phenotype lines: 76705
+2026-03-28 16:06:54,792 [INFO] Unique genotype lines: 76705
+2026-03-28 16:06:54,792 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 16:06:55,119 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 16:06:55,128 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 16:06:55,128 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 16:06:55,892 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 16:07:19,134 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 16:07:21,069 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 16:07:21,069 [INFO] === Step 5: Environment covariates ===
+2026-03-28 16:07:24,622 [INFO] GPU SNPs pruned: 2000 (from 2500)
+2026-03-28 16:07:24,646 [INFO] SNP tensor (82522, 2000) on cuda:0 | prep 3.05s
+2026-03-28 16:07:26,232 [INFO] Final GPU PCA fit: 0.30s | k=50
+2026-03-28 16:09:24,644 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 16:09:24,690 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 16:10:50,512 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:10:50,515 [WARNING] xgboost import failed; Step 7a will use sklearn GBR CPU fallback.
+2026-03-28 16:10:50,517 [WARNING] use_gpu=true but Step 7a GPU path unavailable (xgboost=False, torch_cuda=True); using sklearn GBR CPU fallback.
+2026-03-28 16:10:50,518 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:17:01,838 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 16:17:04,873 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 16:17:05,468 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 16:17:33,087 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 16:17:33,088 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 16:17:39,349 [INFO] Loaded 50/499 population files
+2026-03-28 16:17:45,428 [INFO] Loaded 100/499 population files
+2026-03-28 16:17:51,495 [INFO] Loaded 150/499 population files
+2026-03-28 16:17:57,457 [INFO] Loaded 200/499 population files
+2026-03-28 16:18:03,613 [INFO] Loaded 250/499 population files
+2026-03-28 16:18:09,749 [INFO] Loaded 300/499 population files
+2026-03-28 16:18:15,974 [INFO] Loaded 350/499 population files
+2026-03-28 16:18:21,921 [INFO] Loaded 400/499 population files
+2026-03-28 16:18:27,699 [INFO] Loaded 450/499 population files
+2026-03-28 16:21:12,306 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 16:21:12,420 [INFO] === Step 3: Validate joins ===
+2026-03-28 16:21:12,612 [INFO] Unique phenotype lines: 76705
+2026-03-28 16:21:12,612 [INFO] Unique genotype lines: 76705
+2026-03-28 16:21:12,612 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 16:21:12,711 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 16:21:12,718 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 16:21:12,718 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 16:21:13,536 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 16:21:43,524 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 16:21:45,900 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 16:21:45,900 [INFO] === Step 5: Environment covariates ===
+2026-03-28 16:21:53,704 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 16:21:53,771 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 16:23:23,590 [INFO] === Step 7a: XGBoost (GPU) + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:23:23,591 [INFO] Step 7a GPU enabled (use_gpu=True, torch_cuda=True, device=cuda:0).
+2026-03-28 16:35:01,883 [INFO] Best XGBoost GPU params: {'subsample': 0.75, 'n_estimators': 300, 'max_depth': 8, 'learning_rate': 0.03, 'colsample_bytree': 1.0}
+2026-03-28 16:35:01,883 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===
+2026-03-28 16:35:42,123 [INFO] OOF train metrics: {'rmse': 0.9225600163405993, 'mae': 0.2527651790261502, 'r2': 0.999356097142874}
+2026-03-28 16:35:43,130 [INFO] === Step 7b: Phase B booster + env/year holdout early stopping ===
+2026-03-28 16:35:45,746 [INFO] === Step 9: Top-k per environment ===
+2026-03-28 16:35:46,366 [INFO] === Step 10: Permutation importance + buckets ===
+2026-03-28 16:37:32,521 [WARNING] SHAP skipped: No module named 'shap'
+2026-03-28 16:37:32,522 [INFO] Done. Artifacts in C:\Users\kensm\Gods-Mercy\output
+2026-03-28 16:44:27,271 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 16:44:37,827 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 16:44:40,288 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 16:44:40,794 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 16:45:00,614 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 16:45:00,644 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 16:45:03,306 [INFO] Loaded 50/499 population files
+2026-03-28 16:45:05,926 [INFO] Loaded 100/499 population files
+2026-03-28 16:45:08,697 [INFO] Loaded 150/499 population files
+2026-03-28 16:45:11,359 [INFO] Loaded 200/499 population files
+2026-03-28 16:45:14,262 [INFO] Loaded 250/499 population files
+2026-03-28 16:45:17,184 [INFO] Loaded 300/499 population files
+2026-03-28 16:45:19,930 [INFO] Loaded 350/499 population files
+2026-03-28 16:45:22,542 [INFO] Loaded 400/499 population files
+2026-03-28 16:45:25,040 [INFO] Loaded 450/499 population files
+2026-03-28 16:47:47,476 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 16:47:47,665 [INFO] === Step 3: Validate joins ===
+2026-03-28 16:47:47,746 [INFO] Unique phenotype lines: 76705
+2026-03-28 16:47:47,747 [INFO] Unique genotype lines: 76705
+2026-03-28 16:47:47,748 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 16:47:48,066 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 16:47:48,076 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 16:47:48,076 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 16:47:48,807 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 16:48:12,132 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 16:48:13,908 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 16:48:13,909 [INFO] === Step 5: Environment covariates ===
+2026-03-28 16:48:17,067 [INFO] GPU SNPs pruned: 2000 (from 2500)
+2026-03-28 16:48:17,090 [INFO] SNP tensor (82522, 2000) on cuda:0 | prep 2.75s
+2026-03-28 16:48:18,463 [INFO] Final GPU PCA fit: 0.16s | k=50
+2026-03-28 16:49:49,169 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 16:49:49,200 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 16:51:03,568 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:51:03,571 [WARNING] xgboost import failed; Step 7a will use sklearn GBR CPU fallback.
+2026-03-28 16:51:03,572 [WARNING] use_gpu=true but Step 7a GPU path unavailable (xgboost=False, torch_cuda=True); using sklearn GBR CPU fallback.
+2026-03-28 16:51:03,573 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:06:33,566 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 17:06:36,039 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 17:06:36,543 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 17:07:03,529 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 17:07:03,564 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 17:07:07,145 [INFO] Loaded 50/499 population files
+2026-03-28 17:07:10,686 [INFO] Loaded 100/499 population files
+2026-03-28 17:07:14,493 [INFO] Loaded 150/499 population files
+2026-03-28 17:07:18,019 [INFO] Loaded 200/499 population files
+2026-03-28 17:07:21,753 [INFO] Loaded 250/499 population files
+2026-03-28 17:07:25,342 [INFO] Loaded 300/499 population files
+2026-03-28 17:07:28,782 [INFO] Loaded 350/499 population files
+2026-03-28 17:07:31,979 [INFO] Loaded 400/499 population files
+2026-03-28 17:07:34,906 [INFO] Loaded 450/499 population files
+2026-03-28 17:10:35,884 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 17:10:36,171 [INFO] === Step 3: Validate joins ===
+2026-03-28 17:10:36,278 [INFO] Unique phenotype lines: 76705
+2026-03-28 17:10:36,279 [INFO] Unique genotype lines: 76705
+2026-03-28 17:10:36,280 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 17:10:36,693 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 17:10:36,708 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 17:10:36,709 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 17:10:37,627 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 17:11:06,673 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 17:11:09,099 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 17:11:09,100 [INFO] === Step 5: Environment covariates ===
+2026-03-28 17:11:13,245 [INFO] GPU SNPs pruned: 2000 (from 2500)
+2026-03-28 17:11:13,276 [INFO] SNP tensor (82522, 2000) on cuda:0 | prep 3.62s
+2026-03-28 17:11:14,949 [INFO] Final GPU PCA fit: 0.17s | k=50
+2026-03-28 17:12:58,451 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 17:12:58,497 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 17:14:32,196 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:14:32,200 [WARNING] xgboost import failed; Step 7a will use sklearn GBR CPU fallback.
+2026-03-28 17:14:32,201 [WARNING] use_gpu=true but Step 7a GPU path unavailable (xgboost=False, torch_cuda=True); using sklearn GBR CPU fallback.
+2026-03-28 17:14:32,202 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:35:39,026 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 17:35:41,652 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 17:35:42,190 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 17:36:04,181 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 17:36:04,283 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 17:36:07,256 [INFO] Loaded 50/499 population files
+2026-03-28 17:36:10,209 [INFO] Loaded 100/499 population files
+2026-03-28 17:36:13,281 [INFO] Loaded 150/499 population files
+2026-03-28 17:36:18,109 [INFO] Loaded 200/499 population files
+2026-03-28 17:36:23,111 [INFO] Loaded 250/499 population files
+2026-03-28 17:36:28,958 [INFO] Loaded 300/499 population files
+2026-03-28 17:36:33,248 [INFO] Loaded 350/499 population files
+2026-03-28 17:36:37,079 [INFO] Loaded 400/499 population files
+2026-03-28 17:36:41,079 [INFO] Loaded 450/499 population files
+2026-03-28 17:39:33,626 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 17:39:34,132 [INFO] === Step 3: Validate joins ===
+2026-03-28 17:39:34,295 [INFO] Unique phenotype lines: 76705
+2026-03-28 17:39:34,296 [INFO] Unique genotype lines: 76705
+2026-03-28 17:39:34,296 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 17:39:34,707 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 17:39:34,718 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 17:39:34,719 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 17:39:35,638 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 17:40:05,257 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 17:40:07,802 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 17:40:07,803 [INFO] === Step 5: Environment covariates ===
+2026-03-28 17:40:11,972 [INFO] GPU SNPs pruned: 2000 (from 2500)
+2026-03-28 17:40:11,996 [INFO] SNP tensor (82522, 2000) on cuda:0 | prep 3.58s
+2026-03-28 17:40:13,543 [INFO] Final GPU PCA fit: 0.11s | k=50
+2026-03-28 17:42:11,573 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 17:42:11,618 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 17:43:44,143 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:49:33,607 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:49:37,747 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:49:38,363 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:50:06,131 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 17:50:08,624 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 17:50:09,136 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 17:50:31,314 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output\pheno_env.csv
+2026-03-28 17:50:31,347 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 17:50:34,423 [INFO] Loaded 50/499 population files
+2026-03-28 17:50:37,327 [INFO] Loaded 100/499 population files
+2026-03-28 17:50:40,437 [INFO] Loaded 150/499 population files
+2026-03-28 17:50:43,379 [INFO] Loaded 200/499 population files
+2026-03-28 17:50:46,603 [INFO] Loaded 250/499 population files
+2026-03-28 17:50:49,866 [INFO] Loaded 300/499 population files
+2026-03-28 17:50:52,859 [INFO] Loaded 350/499 population files
+2026-03-28 17:50:55,475 [INFO] Loaded 400/499 population files
+2026-03-28 17:50:57,962 [INFO] Loaded 450/499 population files
+2026-03-28 17:53:49,522 [INFO] Genotype matrix: 76705 lines, 2500 SNPs -> C:\Users\kensm\Gods-Mercy\output\genotypes_c1.csv
+2026-03-28 17:53:49,768 [INFO] === Step 3: Validate joins ===
+2026-03-28 17:53:49,886 [INFO] Unique phenotype lines: 76705
+2026-03-28 17:53:49,888 [INFO] Unique genotype lines: 76705
+2026-03-28 17:53:49,889 [INFO] Overlap lines: 76705 (100.00% of evaluation set)
+2026-03-28 17:53:50,296 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 17:53:50,307 [INFO] Top unmatched pheno line_ids: []
+2026-03-28 17:53:50,308 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 17:53:51,266 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 17:54:20,647 [INFO] Saved full_dataset.csv (530986 rows)
+2026-03-28 17:54:22,774 [INFO] Modeling rows: 82522 (train-year subset + test year)
+2026-03-28 17:54:22,775 [INFO] === Step 5: Environment covariates ===
+2026-03-28 17:54:26,941 [INFO] GPU SNPs pruned: 2000 (from 2500)
+2026-03-28 17:54:26,967 [INFO] SNP tensor (82522, 2000) on cuda:0 | prep 3.59s
+2026-03-28 17:54:28,728 [INFO] Final GPU PCA fit: 0.27s | k=50
+2026-03-28 17:56:23,646 [INFO] Ridge SNP baseline fit on 45000 train rows
+2026-03-28 17:56:23,691 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 17:57:58,531 [INFO] === Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 18:16:41,920 [WARNING] xgboost import failed initially (No module named 'xgboost'). Trying pip install...
+2026-03-28 18:16:59,992 [INFO] xgboost installed successfully in current environment.
+2026-03-28 18:16:59,994 [INFO] === Step 7a: XGBoost (GPU) + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 18:16:59,995 [INFO] Step 7a GPU enabled (use_gpu=True, torch_cuda=True, device=cuda:0).
+2026-03-28 18:38:19,764 [INFO] Best XGBoost GPU params: {'subsample': 0.9, 'n_estimators': 300, 'max_depth': 4, 'learning_rate': 0.03, 'colsample_bytree': 1.0}
+2026-03-28 18:38:19,765 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===
+2026-03-28 18:38:23,411 [INFO] GPU PCA OOF fold 1/3 in 3.52s
+2026-03-28 18:38:26,461 [INFO] GPU PCA OOF fold 2/3 in 3.05s
+2026-03-28 18:38:29,545 [INFO] GPU PCA OOF fold 3/3 in 3.08s
+2026-03-28 18:38:29,565 [INFO] OOF train metrics: {'rmse': 0.8791358870895697, 'mae': 0.2509359101207139, 'r2': 0.9994152865111873}
+2026-03-28 19:43:58,836 [INFO] === Step 7b: Phase B booster + env/year holdout early stopping ===

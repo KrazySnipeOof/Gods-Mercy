@@ -90,3 +90,32 @@
 2026-03-28 11:42:07,647 [INFO] === Step 10: Permutation importance + buckets ===
 2026-03-28 11:42:40,286 [INFO] === Step 9: Top-k per environment ===
 2026-03-28 11:42:40,308 [INFO] === Step 10: Permutation importance + buckets ===
+2026-03-28 16:21:16,669 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 16:21:20,014 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 16:21:20,632 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 16:21:50,770 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output_smoke\pheno_env.csv
+2026-03-28 16:21:50,770 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 16:21:55,876 [INFO] Genotype matrix: 3090 lines, 1200 SNPs -> C:\Users\kensm\Gods-Mercy\output_smoke\genotypes_c1.csv
+2026-03-28 16:21:55,878 [INFO] === Step 3: Validate joins ===
+2026-03-28 16:21:56,958 [INFO] Genotype subset mode: evaluating coverage among 3090 pheno lines in loaded populations only
+2026-03-28 16:21:56,958 [INFO] Unique phenotype lines: 76705
+2026-03-28 16:21:56,958 [INFO] Unique genotype lines: 3090
+2026-03-28 16:21:56,958 [INFO] Overlap lines: 3090 (100.00% of evaluation set)
+2026-03-28 16:21:57,000 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 16:21:57,020 [INFO] Top unmatched pheno line_ids: ['C1.100.100', 'C1.100.101', 'C1.100.102', 'C1.100.103', 'C1.100.104', 'C1.100.105', 'C1.100.106', 'C1.100.107', 'C1.100.108', 'C1.100.109']
+2026-03-28 16:21:57,020 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 16:21:57,451 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 16:21:57,463 [INFO] Skipping full_dataset.csv write (save_full_dataset_csv=false)
+2026-03-28 16:21:58,014 [INFO] Modeling rows: 3000 (train-year subset + test year)
+2026-03-28 16:21:58,015 [INFO] === Step 5: Environment covariates ===
+2026-03-28 16:21:58,385 [INFO] Ridge SNP baseline fit on 3000 train rows
+2026-03-28 16:21:58,388 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 16:22:09,679 [INFO] === Step 7a: XGBoost (GPU) + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 16:22:09,680 [INFO] Step 7a GPU enabled (use_gpu=True, torch_cuda=True, device=cuda:0).
+2026-03-28 16:22:31,858 [INFO] Best XGBoost GPU params: {'subsample': 0.8, 'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.08, 'colsample_bytree': 1.0}
+2026-03-28 16:22:31,858 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===
+2026-03-28 16:22:33,391 [INFO] OOF train metrics: {'rmse': 1.0285315410581413, 'mae': 0.32251416869710275, 'r2': 0.9991597545115921}
+2026-03-28 16:22:33,650 [INFO] === Step 7b: Phase B booster + env/year holdout early stopping ===
+2026-03-28 16:22:35,948 [INFO] === Step 9: Top-k per environment ===
+2026-03-28 16:22:35,952 [INFO] === Step 10: Permutation importance + buckets ===
+2026-03-28 16:22:40,028 [INFO] Done. Artifacts in C:\Users\kensm\Gods-Mercy\output_smoke

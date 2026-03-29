@@ -47,9 +47,16 @@ max_env_features_gxe: 20
 n_interaction_pairs: 10
 
 use_xgboost: false
+# Step 7a now uses XGBoost GPU search when use_gpu=true and CUDA is available;
+# otherwise it falls back to sklearn GradientBoostingRegressor.
+# Verify GPU utilization during Step 7a with: nvidia-smi
 # GPU pipeline (output/maize_gxe_ml_pipeline_gpu.py) + linear_regression_gpu_baseline.ipynb
 use_gpu: true
 cuda_device: 0
+# GPU PCA: variance-top SNPs, torch.pca_lowrank; per-fold OOF refit unless pca_once
+max_snps: 2000
+pca_once: false
+gpu_pca_n_folds: 3
 artifact_suffix: "_gpu"
 use_shap: true
 bootstrap_uncertainty_n: 20

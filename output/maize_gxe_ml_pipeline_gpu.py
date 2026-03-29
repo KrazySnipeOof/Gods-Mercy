@@ -2,8 +2,7 @@
 """
 Maize line yield (YLDBE) under GxE — full ML pipeline (GPU edition).
 
-Phase A/B: XGBoost on CUDA (tree_method=hist) when use_gpu and torch.cuda.is_available().
-Fallback: sklearn GradientBoostingRegressor + HistGradientBoostingRegressor (CPU).
+Phase A/B: XGBoost on CUDA (tree_method=hist), no CPU fallback for tree boosters.
 Linear baseline: see output/linear_regression_gpu_baseline.ipynb (PyTorch lstsq).
 
 ## 1. Lock Analytical Unit
@@ -70,8 +69,6 @@ except ImportError:
     torch = None  # type: ignore
 from sklearn.decomposition import PCA
 from sklearn.ensemble import (
-    GradientBoostingRegressor,
-    HistGradientBoostingRegressor,
     RandomForestRegressor,
 )
 from sklearn.base import clone
@@ -83,6 +80,19 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+GPU_REQUIRED_ERR = (
+    "GPU XGBoost required for hackathon speed – check CUDA install & VRAM. CPU too slow for SNPs."
+)
+GPU_SETUP_HELP = """
+GPU XGBoost REQUIRED for SNP-scale speed.
+1) Colab: Runtime -> Change runtime -> GPU (T4)
+2) pip: pip install --upgrade xgboost[GPU]
+3) conda: conda install -c conda-forge xgboost-gpu
+4) Verify: python -c "import xgboost as xgb; print(xgb.__version__)"
+
+No CPU fallback - sklearn GBR is disabled for hackathon runs.
+""".strip()
 
 
 def check_gpu_mem_mib() -> Optional[float]:
@@ -113,7 +123,6 @@ def log_gpu_mem(tag: str) -> None:
 
 
 def make_xgb_estimator(
-    use_gpu: bool,
     cuda_device: int,
     random_state: int,
     **kwargs: Any,
@@ -125,19 +134,24 @@ def make_xgb_estimator(
         "random_state": random_state,
         "n_jobs": 1,
         "verbosity": 0,
+        "objective": "reg:squarederror",
+        "device": f"cuda:{int(cuda_device)}",
+        "predictor": "gpu_predictor",
         **kwargs,
     }
-    if use_gpu:
-        params["device"] = f"cuda:{int(cuda_device)}"
-        params["predictor"] = "gpu_predictor"
-    else:
-        params["device"] = "cpu"
-        params.pop("predictor", None)
     try:
         return xgb.XGBRegressor(**params)
     except TypeError:
         params.pop("predictor", None)
         return xgb.XGBRegressor(**params)
+
+
+def raise_gpu_required(cause: Optional[Exception] = None) -> None:
+    logging.error("%s", GPU_REQUIRED_ERR)
+    logging.error("%s", GPU_SETUP_HELP)
+    if cause is None:
+        raise RuntimeError(GPU_REQUIRED_ERR)
+    raise RuntimeError(GPU_REQUIRED_ERR) from cause
 
 
 PROGENY_RE = re.compile(r"^\d{11}$")
@@ -591,6 +605,74 @@ def metrics_dict(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     }
 
 
+def save_xgb_training_curves(
+    evals_result: Dict[str, Dict[str, List[float]]],
+    out_png: Path,
+    out_csv: Path,
+    best_iteration: Optional[int] = None,
+) -> None:
+    """Persist XGBoost train/val RMSE+MAE curves for demo and diagnostics."""
+    if not evals_result:
+        return
+
+    train_key = "train" if "train" in evals_result else "validation_0"
+    val_key = "val" if "val" in evals_result else ("validation_1" if "validation_1" in evals_result else None)
+    if train_key not in evals_result:
+        return
+
+    train_rmse = list(evals_result.get(train_key, {}).get("rmse", []))
+    train_mae = list(evals_result.get(train_key, {}).get("mae", []))
+    val_rmse = list(evals_result.get(val_key, {}).get("rmse", [])) if val_key else []
+    val_mae = list(evals_result.get(val_key, {}).get("mae", [])) if val_key else []
+
+    rounds = max(len(train_rmse), len(train_mae), len(val_rmse), len(val_mae))
+    if rounds <= 0:
+        return
+
+    history = pd.DataFrame({"round": np.arange(1, rounds + 1, dtype=int)})
+    for name, seq in [
+        ("train_rmse", train_rmse),
+        ("val_rmse", val_rmse),
+        ("train_mae", train_mae),
+        ("val_mae", val_mae),
+    ]:
+        arr = np.full(rounds, np.nan, dtype=float)
+        if seq:
+            arr[: len(seq)] = np.asarray(seq, dtype=float)
+        history[name] = arr
+    history.to_csv(out_csv, index=False)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+    x = np.arange(1, rounds + 1)
+    if train_rmse:
+        ax1.plot(x[: len(train_rmse)], train_rmse, "b-", label="Train RMSE", linewidth=2)
+    if val_rmse:
+        ax1.plot(x[: len(val_rmse)], val_rmse, "r-", label="Val RMSE", linewidth=2)
+    if best_iteration is not None and best_iteration >= 0:
+        ax1.axvline(best_iteration + 1, color="g", ls="--", label=f"Best: {best_iteration + 1}")
+    ax1.set_xlabel("Boosting Rounds")
+    ax1.set_ylabel("RMSE (bu/ac)")
+    ax1.set_title("XGBoost Training: RMSE Convergence")
+    ax1.grid(True, alpha=0.3)
+    ax1.legend()
+
+    if train_mae:
+        ax2.plot(x[: len(train_mae)], train_mae, "b-", label="Train MAE", linewidth=2)
+    if val_mae:
+        ax2.plot(x[: len(val_mae)], val_mae, "r-", label="Val MAE", linewidth=2)
+    if best_iteration is not None and best_iteration >= 0:
+        ax2.axvline(best_iteration + 1, color="g", ls="--", label=f"Best: {best_iteration + 1}")
+    ax2.set_xlabel("Boosting Rounds")
+    ax2.set_ylabel("MAE (bu/ac)")
+    ax2.set_title("XGBoost Training: MAE Convergence")
+    ax2.grid(True, alpha=0.3)
+    ax2.legend()
+
+    fig.tight_layout()
+    fig.savefig(out_png, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
 def main() -> None:
     _repo = Path(__file__).resolve().parent.parent
     parser = argparse.ArgumentParser(description="Maize GxE YLDBE pipeline (GPU XGB + PyTorch check)")
@@ -613,10 +695,34 @@ def main() -> None:
     cuda_dev = int(cfg.get("cuda_device", 0))
     torch_cuda = bool(torch is not None and torch.cuda.is_available())
     logging.info("torch.cuda.is_available() = %s", torch_cuda)
-    use_gpu_path = bool(use_gpu_cfg and torch_cuda)
-    if use_gpu_cfg and not torch_cuda:
-        print("GPU unavailable; falling back to CPU sklearn / XGBoost CPU.")
-        logging.warning("GPU unavailable; falling back to CPU sklearn / XGBoost CPU.")
+    if not use_gpu_cfg:
+        raise_gpu_required()
+    if not torch_cuda:
+        raise_gpu_required()
+
+    try:
+        import xgboost as xgb  # type: ignore
+    except Exception as e:
+        raise_gpu_required(e)
+
+    major = int(str(getattr(xgb, "__version__", "0")).split(".")[0])
+    if major < 2:
+        raise_gpu_required(RuntimeError("XGBoost 2.x+ required."))
+
+    # Force a tiny CUDA fit early to catch CUDA/runtime/VRAM mismatch immediately.
+    try:
+        _X_probe = np.random.rand(128, 8).astype(np.float32)
+        _y_probe = np.random.rand(128).astype(np.float32)
+        make_xgb_estimator(
+            cuda_dev,
+            int(cfg.get("random_state", 42)),
+            n_estimators=8,
+            max_depth=3,
+            learning_rate=0.1,
+            subsample=0.8,
+        ).fit(_X_probe, _y_probe, verbose=False)
+    except Exception as e:
+        raise_gpu_required(e)
 
     peak_mem_mib: Optional[float] = None
 
@@ -787,103 +893,62 @@ def main() -> None:
     time_cpu_bench = time_gpu_bench = float("nan")
     bench_speedup: Optional[float] = None
 
-    xgb_ok = False
-    try:
-        import xgboost  # noqa: F401
-
-        xgb_ok = True
-    except ImportError:
-        logging.warning("xgboost not installed; using sklearn GBR/HistGB (CPU)")
-
-    if use_gpu_path and xgb_ok:
-        bench_n = min(15000, X_tr.shape[0])
-        if bench_n >= 1000:
-            bidx = np.random.RandomState(42).choice(X_tr.shape[0], size=bench_n, replace=False)
-            Xb, yb = X_tr[bidx], y_tr[bidx]
-            log_gpu_mem("pre micro-bench")
-            mem_sample()
-            t0 = time.perf_counter()
-            make_xgb_estimator(
-                True,
-                cuda_dev,
-                rs_pipe,
-                n_estimators=200,
-                max_depth=6,
-                learning_rate=0.05,
-                subsample=0.8,
-            ).fit(Xb, yb)
-            time_gpu_bench = time.perf_counter() - t0
-            log_gpu_mem("post micro-bench GPU")
-            mem_sample()
-            t0 = time.perf_counter()
-            make_xgb_estimator(
-                False,
-                0,
-                rs_pipe,
-                n_estimators=200,
-                max_depth=6,
-                learning_rate=0.05,
-                subsample=0.8,
-            ).fit(Xb, yb)
-            time_cpu_bench = time.perf_counter() - t0
-            bench_speedup = float(time_cpu_bench / max(time_gpu_bench, 1e-9))
-            logging.info(
-                "Micro-bench XGB 200 trees n=%s: GPU %.3fs vs CPU %.3fs (speedup %.2fx)",
-                bench_n,
-                time_gpu_bench,
-                time_cpu_bench,
-                bench_speedup,
-            )
-
-    if use_gpu_path and xgb_ok:
-        log_step("Step 7a: XGBoost GPU + RandomizedSearchCV (GroupKFold)")
-        base_xgb = make_xgb_estimator(
-            True,
+    bench_n = min(15000, X_tr.shape[0])
+    if bench_n >= 1000:
+        bidx = np.random.RandomState(42).choice(X_tr.shape[0], size=bench_n, replace=False)
+        Xb, yb = X_tr[bidx], y_tr[bidx]
+        log_gpu_mem("pre micro-bench")
+        mem_sample()
+        t0 = time.perf_counter()
+        make_xgb_estimator(
             cuda_dev,
             rs_pipe,
-            n_estimators=500,
+            n_estimators=200,
             max_depth=6,
             learning_rate=0.05,
             subsample=0.8,
-        )
-        log_gpu_mem("pre RandomizedSearchCV")
+            colsample_bytree=0.8,
+        ).fit(Xb, yb, verbose=False)
+        time_gpu_bench = time.perf_counter() - t0
+        bench_speedup = 1.0
+        log_gpu_mem("post micro-bench GPU")
         mem_sample()
-        search = RandomizedSearchCV(
-            clone(base_xgb),
-            param_dist,
-            n_iter=n_iter,
-            cv=GroupKFold(n_splits=n_splits_cv),
-            random_state=42,
-            n_jobs=1,
-            scoring="neg_root_mean_squared_error",
-            refit=True,
-        )
-        t0 = time.perf_counter()
+        logging.info("Micro-bench XGB GPU 200 trees n=%s: %.3fs", bench_n, time_gpu_bench)
+
+    log_step("Step 7a: XGBoost GPU + RandomizedSearchCV (GroupKFold)")
+    param_dist["colsample_bytree"] = [0.6, 0.8, 1.0]
+    base_xgb = make_xgb_estimator(
+        cuda_dev,
+        rs_pipe,
+        n_estimators=500,
+        max_depth=6,
+        learning_rate=0.05,
+        subsample=0.8,
+        colsample_bytree=0.8,
+    )
+    log_gpu_mem("pre RandomizedSearchCV")
+    mem_sample()
+    search = RandomizedSearchCV(
+        clone(base_xgb),
+        param_dist,
+        n_iter=n_iter,
+        cv=GroupKFold(n_splits=n_splits_cv),
+        random_state=42,
+        n_jobs=1,
+        scoring="neg_root_mean_squared_error",
+        refit=True,
+    )
+    t0 = time.perf_counter()
+    try:
         search.fit(X_tr, y_tr, groups=groups_all[train_idx])
-        time_search = time.perf_counter() - t0
-        log_gpu_mem("post RandomizedSearchCV")
-        mem_sample()
-        best_template = clone(search.best_estimator_)
-        booster_backend = "xgboost_gpu"
-        logging.info("Best XGB CV params: %s", search.best_params_)
-    else:
-        log_step("Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold) [CPU fallback]")
-        gbr = GradientBoostingRegressor(random_state=42)
-        search = RandomizedSearchCV(
-            gbr,
-            param_dist,
-            n_iter=n_iter,
-            cv=GroupKFold(n_splits=n_splits_cv),
-            random_state=42,
-            n_jobs=int(cfg.get("sklearn_n_jobs", 1)),
-            scoring="neg_root_mean_squared_error",
-        )
-        t0 = time.perf_counter()
-        search.fit(X_all[train_idx], y_all[train_idx], groups=groups_all[train_idx])
-        time_search = time.perf_counter() - t0
-        best_template = GradientBoostingRegressor(**search.best_params_, random_state=42)
-        booster_backend = "sklearn_gbr"
-        logging.info("Best GBR params: %s", search.best_params_)
+    except Exception as e:
+        raise_gpu_required(e)
+    time_search = time.perf_counter() - t0
+    log_gpu_mem("post RandomizedSearchCV")
+    mem_sample()
+    best_template = clone(search.best_estimator_)
+    booster_backend = "xgboost_gpu"
+    logging.info("Best XGB CV params: %s", search.best_params_)
 
     log_step("Step 8: OOF predictions (PCA refit per fold)")
     log_gpu_mem("pre OOF loop")
@@ -932,48 +997,58 @@ def main() -> None:
     fig.savefig(out / f"res_plot{SUF}.png", dpi=150)
     plt.close(fig)
 
-    # Phase B — default XGBoost GPU with test-year early stopping (CPU HistGB if fallback)
+    # Phase B — XGBoost GPU with test-year early stopping (no CPU fallback)
     log_step("Step 7b: Phase B booster + env/year holdout early stopping")
     esr = int(hypers.get("early_stopping_rounds", 50))
     hgb: Any
     phase_b_path: Path
-    if use_gpu_path and xgb_ok:
-        merged = dict(search.best_params_)
-        merged["n_estimators"] = int(hypers["hist_gb"]["max_iter"])
-        hgb = make_xgb_estimator(True, cuda_dev, rs_pipe, **merged)
-        log_gpu_mem("pre Phase B fit")
-        mem_sample()
-        t0 = time.perf_counter()
+    merged = dict(search.best_params_)
+    merged["n_estimators"] = int(hypers["hist_gb"]["max_iter"])
+    # Enable multi-metric eval history for live demo curves.
+    merged["eval_metric"] = ["rmse", "mae"]
+    merged["verbosity"] = 1
+    hgb = make_xgb_estimator(cuda_dev, rs_pipe, **merged)
+    log_gpu_mem("pre Phase B fit")
+    mem_sample()
+    t0 = time.perf_counter()
+    evals_result: Dict[str, Dict[str, List[float]]] = {}
+    try:
         if len(X_va) >= 20:
-            hgb.fit(
-                X_tr,
-                y_tr,
-                eval_set=[(X_va, y_va)],
-                verbose=False,
-                early_stopping_rounds=esr,
-            )
+            fit_kwargs: Dict[str, Any] = {
+                "eval_set": [(X_tr, y_tr), (X_va, y_va)],
+                "verbose": 10,
+                "early_stopping_rounds": esr,
+            }
+            try:
+                fit_kwargs["callbacks"] = [xgb.callback.EvaluationMonitor(period=10)]
+            except Exception:
+                pass
+            hgb.fit(X_tr, y_tr, **fit_kwargs)
         else:
-            hgb.fit(X_tr, y_tr)
-        time_phase_b = time.perf_counter() - t0
-        log_gpu_mem("post Phase B fit")
-        mem_sample()
-        phase_b_path = out / "xgb_gpu_model.pkl"
-        joblib.dump(hgb, phase_b_path)
+            hgb.fit(X_tr, y_tr, eval_set=[(X_tr, y_tr)], verbose=10)
+    except Exception as e:
+        raise_gpu_required(e)
+    if hasattr(hgb, "evals_result"):
+        try:
+            evals_result = hgb.evals_result()
+        except Exception:
+            evals_result = {}
+    time_phase_b = time.perf_counter() - t0
+    log_gpu_mem("post Phase B fit")
+    mem_sample()
+    best_it = int(getattr(hgb, "best_iteration", -1))
+    best_score = getattr(hgb, "best_score", None)
+    if best_score is not None:
+        logging.info("XGBoost best iteration: %s | best score: %s", best_it, best_score)
     else:
-        hgb = HistGradientBoostingRegressor(
-            max_iter=int(hypers["hist_gb"]["max_iter"]),
-            max_depth=int(hypers["hist_gb"]["max_depth"]),
-            learning_rate=float(hypers["hist_gb"]["learning_rate"]),
-            random_state=42,
-            early_stopping=True,
-            validation_fraction=0.12,
-            n_iter_no_change=esr,
-        )
-        t0 = time.perf_counter()
-        hgb.fit(X_tr, y_tr)
-        time_phase_b = time.perf_counter() - t0
-        phase_b_path = out / f"hist_gb{SUF}.pkl"
-        joblib.dump(hgb, phase_b_path)
+        logging.info("XGBoost best iteration: %s", best_it)
+    if evals_result:
+        curves_png = out / f"xgb_training_curves{SUF}.png"
+        curves_csv = out / f"xgb_training_history{SUF}.csv"
+        save_xgb_training_curves(evals_result, curves_png, curves_csv, best_iteration=best_it)
+        logging.info("Saved XGBoost training curves: %s", curves_png)
+    phase_b_path = out / "xgb_gpu_model.pkl"
+    joblib.dump(hgb, phase_b_path)
 
     model_df["pred_final"] = hgb.predict(X_all)
     oof_path = out / f"oof_preds{SUF}.csv"
@@ -1063,7 +1138,7 @@ def main() -> None:
     gpu_summary = {
         "torch_cuda_available": torch_cuda,
         "use_gpu_config": use_gpu_cfg,
-        "use_gpu_path": use_gpu_path,
+        "use_gpu_path": True,
         "cuda_device": cuda_dev,
         "booster_backend": booster_backend,
         "gpu_speedup_micro_bench": bench_speedup,

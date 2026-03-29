@@ -15,19 +15,19 @@ soc_5_15cm
 clay_0_5cm
 phh2o_15_30cm
 YLD_BE
-Unnamed: 0
-LONGITUDE
-ProjectID
-ERM
+GERMPLASM_ID
+YEAR_y
+MAB_PROJECT_ID
+Unnamed: 0_y
 past_yld_mean
 past_yld_median
 GXE__GPC_5__x__X09_CLDD
-GXE__GPC_5__x__X10_HTDD
-GXE__GPC_5__x__X08_PRCP
-GXE__GPC_1__x__X09_CLDD
-GXE__GPC_8__x__X09_CLDD
 GXE__GPC_3__x__X09_CLDD
-GXE__GPC_1__x__X10_HTDD
 GXE__GPC_2__x__X09_CLDD
 GXE__GPC_7__x__X09_CLDD
+GXE__GPC_4__x__X09_CLDD
+GXE__GPC_1__x__X09_CLDD
+GXE__GPC_10__x__X09_CLDD
+GXE__GPC_8__x__X09_CLDD
+GXE__GPC_9__x__X09_CLDD
 GXE__GPC_6__x__X09_CLDD

@@ -2,14 +2,14 @@
   "model": "PyTorch lstsq OLS (GPU if CUDA)",
   "device": "cuda",
   "oof_global_metrics": {
-    "rmse": 5.242552447491263e-05,
-    "mae": 4.374183593745771e-05,
-    "r2": 0.9999999999979207
+    "rmse": 5.1249491239317904e-05,
+    "mae": 3.7582849121123254e-05,
+    "r2": 0.9999999999980129
   },
-  "cv_rmse_std": 2.426870630281064e-05,
+  "cv_rmse_std": 3.120676157972134e-05,
   "wall_seconds": {
-    "oof_loop": 1527.508268,
-    "final_lstsq": 0.022669100000030085
+    "oof_loop": 0.4379893000004813,
+    "final_lstsq": 0.011043000000427128
   },
   "outputs": [
     "C:\\Users\\kensm\\Gods-Mercy\\output\\lr_gpu_weights.npy",

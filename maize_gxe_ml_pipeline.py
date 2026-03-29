@@ -669,56 +669,153 @@ def main() -> None:
     groups_all = model_df["env_id"].astype(str).values
     train_idx = is_train
 
-    # Phase A — RandomizedSearchCV on train rows only
-    log_step("Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold)")
-    gbr = GradientBoostingRegressor(random_state=42)
+    # Phase A — RandomizedSearchCV on train rows only (GPU XGBoost if available/configured)
     n_train_rows = int(train_idx.sum())
-    if n_train_rows < 15_000:
-        param_dist = {
-            "n_estimators": [100, 200, 300],
-            "max_depth": [4, 5, 6],
-            "learning_rate": [0.05, 0.08],
-            "subsample": [0.8],
-        }
-    else:
-        param_dist = {
-            "n_estimators": [300, 500, 700],
-            "max_depth": [4, 6, 8],
-            "learning_rate": [0.03, 0.05, 0.08],
-            "subsample": [0.75, 0.8, 0.9],
-        }
+    use_gpu_cfg = bool(cfg.get("use_gpu", False))
+    cuda_device = int(cfg.get("cuda_device", 0))
+    xgb_ok = False
+    torch_cuda = False
+    xgb = None
+    if use_gpu_cfg:
+        try:
+            import xgboost as xgb  # type: ignore
+
+            xgb_ok = True
+        except Exception:
+            logging.warning("xgboost import failed; Step 7a will use sklearn GBR CPU fallback.")
+        try:
+            import torch  # type: ignore
+
+            torch_cuda = bool(torch.cuda.is_available())
+        except Exception:
+            # torch optional here; if unavailable we keep CPU fallback to avoid accidental CPU XGBoost path.
+            torch_cuda = False
+    use_gpu_xgb = bool(use_gpu_cfg and xgb_ok and torch_cuda)
+
     n_iter = int(hypers.get("random_search_iter", 50))
     if n_train_rows < 15_000:
         n_iter = min(n_iter, 12)
 
     gb_hyp = hypers.get("gbr", {})
-    fixed_params = {
+    fixed_params_gbr = {
         "n_estimators": int(gb_hyp.get("n_estimators", 500)),
         "max_depth": int(gb_hyp.get("max_depth", 6)),
         "learning_rate": float(gb_hyp.get("learning_rate", 0.05)),
         "subsample": float(gb_hyp.get("subsample", 0.8)),
     }
     skip_search = bool(cfg.get("skip_random_search", False))
-    if skip_search:
-        logging.info("Skipping RandomizedSearchCV (small train or skip_random_search); using config gbr params %s", fixed_params)
-        search = type(
-            "SearchStub",
-            (),
-            {"best_params_": fixed_params, "best_estimator_": GradientBoostingRegressor(random_state=42, **fixed_params)},
-        )()
-    else:
-        search = RandomizedSearchCV(
-            gbr,
-            param_dist,
-            n_iter=n_iter,
-            cv=GroupKFold(n_splits=int(hypers.get("group_cv_splits", 5))),
-            random_state=42,
-            n_jobs=int(cfg.get("sklearn_n_jobs", 1)),
-            scoring="neg_root_mean_squared_error",
+
+    if use_gpu_xgb:
+        log_step("Step 7a: XGBoost (GPU) + RandomizedSearchCV (GroupKFold)")
+        logging.info(
+            "Step 7a GPU enabled (use_gpu=%s, torch_cuda=%s, device=cuda:%s).",
+            use_gpu_cfg,
+            torch_cuda,
+            cuda_device,
         )
-        search.fit(X_all[train_idx], y_all[train_idx], groups=groups_all[train_idx])
-        logging.info("Best GBR params: %s", search.best_params_)
-    best_gbr = search.best_estimator_
+        if n_train_rows < 15_000:
+            param_dist = {
+                "n_estimators": [100, 200, 300],
+                "max_depth": [4, 5, 6],
+                "learning_rate": [0.05, 0.08],
+                "subsample": [0.8],
+                "colsample_bytree": [0.8, 1.0],
+            }
+        else:
+            param_dist = {
+                "n_estimators": [300, 500, 700],
+                "max_depth": [4, 6, 8],
+                "learning_rate": [0.03, 0.05, 0.08],
+                "subsample": [0.75, 0.8, 0.9],
+                "colsample_bytree": [0.6, 0.8, 1.0],
+            }
+
+        fixed_params_xgb = {
+            "n_estimators": int(gb_hyp.get("n_estimators", 500)),
+            "max_depth": int(gb_hyp.get("max_depth", 6)),
+            "learning_rate": float(gb_hyp.get("learning_rate", 0.05)),
+            "subsample": float(gb_hyp.get("subsample", 0.8)),
+            "colsample_bytree": 0.8,
+            "objective": "reg:squarederror",
+            "tree_method": "hist",
+            "device": f"cuda:{cuda_device}",
+            "predictor": "gpu_predictor",
+            "n_jobs": 1,
+            "random_state": 42,
+            "verbosity": 0,
+        }
+
+        if skip_search:
+            logging.info(
+                "Skipping RandomizedSearchCV (small train or skip_random_search); using config xgboost params %s",
+                fixed_params_xgb,
+            )
+            search = type(
+                "SearchStub",
+                (),
+                {"best_params_": fixed_params_xgb, "best_estimator_": xgb.XGBRegressor(**fixed_params_xgb)},
+            )()
+        else:
+            search = RandomizedSearchCV(
+                xgb.XGBRegressor(**fixed_params_xgb),
+                param_dist,
+                n_iter=n_iter,
+                cv=GroupKFold(n_splits=int(hypers.get("group_cv_splits", 5))),
+                random_state=42,
+                # Keep single worker to avoid multi-process contention on one GPU.
+                n_jobs=1,
+                scoring="neg_root_mean_squared_error",
+            )
+            search.fit(X_all[train_idx], y_all[train_idx], groups=groups_all[train_idx])
+            logging.info("Best XGBoost GPU params: %s", search.best_params_)
+        oof_model = xgb.XGBRegressor(**search.best_params_)
+    else:
+        if use_gpu_cfg and not use_gpu_xgb:
+            logging.warning(
+                "use_gpu=true but Step 7a GPU path unavailable (xgboost=%s, torch_cuda=%s); using sklearn GBR CPU fallback.",
+                xgb_ok,
+                torch_cuda,
+            )
+        log_step("Step 7a: GradientBoosting + RandomizedSearchCV (GroupKFold)")
+        gbr = GradientBoostingRegressor(random_state=42)
+        if n_train_rows < 15_000:
+            param_dist = {
+                "n_estimators": [100, 200, 300],
+                "max_depth": [4, 5, 6],
+                "learning_rate": [0.05, 0.08],
+                "subsample": [0.8],
+            }
+        else:
+            param_dist = {
+                "n_estimators": [300, 500, 700],
+                "max_depth": [4, 6, 8],
+                "learning_rate": [0.03, 0.05, 0.08],
+                "subsample": [0.75, 0.8, 0.9],
+            }
+
+        if skip_search:
+            logging.info(
+                "Skipping RandomizedSearchCV (small train or skip_random_search); using config gbr params %s",
+                fixed_params_gbr,
+            )
+            search = type(
+                "SearchStub",
+                (),
+                {"best_params_": fixed_params_gbr, "best_estimator_": GradientBoostingRegressor(random_state=42, **fixed_params_gbr)},
+            )()
+        else:
+            search = RandomizedSearchCV(
+                gbr,
+                param_dist,
+                n_iter=n_iter,
+                cv=GroupKFold(n_splits=int(hypers.get("group_cv_splits", 5))),
+                random_state=42,
+                n_jobs=int(cfg.get("sklearn_n_jobs", 1)),
+                scoring="neg_root_mean_squared_error",
+            )
+            search.fit(X_all[train_idx], y_all[train_idx], groups=groups_all[train_idx])
+            logging.info("Best GBR params: %s", search.best_params_)
+        oof_model = GradientBoostingRegressor(**search.best_params_, random_state=42)
 
     # OOF on train with PCA refit per fold (Step 4 + 8)
     log_step("Step 8: OOF predictions (PCA refit per fold)")
@@ -731,7 +828,7 @@ def main() -> None:
         groups_all[train_idx],
         int(hypers.get("group_cv_splits", 5)),
         pca_n,
-        GradientBoostingRegressor(**search.best_params_, random_state=42),
+        oof_model,
         int(cfg.get("random_state", 42)),
     )
     oof_full = np.full(len(y_all), np.nan)

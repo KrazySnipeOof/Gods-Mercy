@@ -7,3 +7,5 @@ output/genotypes_c1.csv
 output/pheno_env.csv
 output_smoke/full_dataset.csv
 output_smoke/pheno_env.csv
+output_smoke/full_dataset_gpu_smoke.csv
+output_smoke/pheno_env_gpu_smoke.csv

@@ -1,0 +1,40 @@
+2026-03-28 17:27:10,246 [INFO] torch.cuda.is_available() = True
+2026-03-28 17:27:10,492 [INFO] === Step 1: Lock analytical unit ===
+2026-03-28 17:27:15,220 [WARNING] Dropped 4488 phenotype rows with non-parseable line_id
+2026-03-28 17:27:16,114 [WARNING] Duplicate grain rows: 2924 - dropping duplicates (keep first)
+2026-03-28 17:27:58,881 [INFO] Saved 530986 rows to C:\Users\kensm\Gods-Mercy\output_smoke\pheno_env_gpu_smoke.csv
+2026-03-28 17:27:58,881 [INFO] === Step 2: Build genotype matrix ===
+2026-03-28 17:28:07,332 [INFO] Genotype matrix: 3090 lines, 1200 SNPs -> C:\Users\kensm\Gods-Mercy\output_smoke\genotypes_c1_gpu_smoke.csv
+2026-03-28 17:28:07,337 [INFO] === Step 3: Validate joins ===
+2026-03-28 17:28:09,270 [INFO] Genotype subset mode: evaluating coverage among 3090 pheno lines in loaded populations only
+2026-03-28 17:28:09,270 [INFO] Unique phenotype lines: 76705
+2026-03-28 17:28:09,271 [INFO] Unique genotype lines: 3090
+2026-03-28 17:28:09,271 [INFO] Overlap lines: 3090 (100.00% of evaluation set)
+2026-03-28 17:28:09,344 [INFO] Phenotype rows with any env feature: 100.00%
+2026-03-28 17:28:09,378 [INFO] Top unmatched pheno line_ids: ['C1.100.100', 'C1.100.101', 'C1.100.102', 'C1.100.103', 'C1.100.104', 'C1.100.105', 'C1.100.106', 'C1.100.107', 'C1.100.108', 'C1.100.109']
+2026-03-28 17:28:09,378 [INFO] Top unmatched geno line_ids (sample): []
+2026-03-28 17:28:10,198 [INFO] Dropping 3 columns with >50% NaN
+2026-03-28 17:28:58,398 [INFO] Saved full_dataset_gpu_smoke.csv (530986 rows)
+2026-03-28 17:28:59,414 [INFO] Modeling rows: 3000 (train-year subset + test year)
+2026-03-28 17:28:59,414 [INFO] === Step 5: Environment covariates ===
+2026-03-28 17:29:00,191 [INFO] Ridge SNP baseline fit on 3000 train rows
+2026-03-28 17:29:00,196 [INFO] === Step 6: GxE feature refinement ===
+2026-03-28 17:29:11,241 [INFO] [GPU mem MiB] pre micro-bench: 2319.0
+2026-03-28 17:29:12,600 [INFO] [GPU mem MiB] post micro-bench GPU: 2326.0
+2026-03-28 17:29:12,647 [INFO] Micro-bench XGB GPU 200 trees n=3000: 1.278s
+2026-03-28 17:29:12,647 [INFO] === Step 7a: XGBoost GPU + RandomizedSearchCV (GroupKFold) ===
+2026-03-28 17:29:12,696 [INFO] [GPU mem MiB] pre RandomizedSearchCV: 2326.0
+2026-03-28 17:30:39,758 [INFO] [GPU mem MiB] post RandomizedSearchCV: 2332.0
+2026-03-28 17:30:39,804 [INFO] Best XGB CV params: {'subsample': 0.8, 'n_estimators': 500, 'max_depth': 8, 'learning_rate': 0.08, 'colsample_bytree': 1.0}
+2026-03-28 17:30:39,805 [INFO] === Step 8: OOF predictions (PCA refit per fold) ===
+2026-03-28 17:30:39,851 [INFO] [GPU mem MiB] pre OOF loop: 2332.0
+2026-03-28 17:30:58,080 [INFO] [GPU mem MiB] post OOF loop: 2325.0
+2026-03-28 17:30:58,126 [INFO] OOF train metrics: {'rmse': 1.0164553483161014, 'mae': 0.3353806030273437, 'r2': 0.9991793696566673}
+2026-03-28 17:30:58,429 [INFO] === Step 7b: Phase B booster + env/year holdout early stopping ===
+2026-03-28 17:30:58,477 [INFO] [GPU mem MiB] pre Phase B fit: 2317.0
+2026-03-28 17:31:00,920 [INFO] [GPU mem MiB] post Phase B fit: 2322.0
+2026-03-28 17:31:00,967 [INFO] XGBoost best iteration: -1
+2026-03-28 17:31:01,214 [INFO] Saved XGBoost training curves: C:\Users\kensm\Gods-Mercy\output_smoke\xgb_training_curves_gpu_smoke.png
+2026-03-28 17:31:01,246 [INFO] === Step 9: Top-k per environment ===
+2026-03-28 17:31:01,249 [INFO] === Step 10: Permutation importance + buckets ===
+2026-03-28 17:31:08,812 [INFO] Done. Artifacts in C:\Users\kensm\Gods-Mercy\output_smoke

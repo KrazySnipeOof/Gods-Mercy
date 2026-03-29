@@ -1,0 +1,21 @@
+{
+  "torch_cuda_available": true,
+  "use_gpu_config": true,
+  "use_gpu_path": true,
+  "cuda_device": 0,
+  "booster_backend": "xgboost_gpu",
+  "gpu_speedup_micro_bench": 1.0,
+  "time_seconds": {
+    "randomized_search": 86.96853579999879,
+    "oof_loop": 18.134088800001336,
+    "phase_b_fit": 2.349944300000061,
+    "micro_bench_gpu": 1.2775101000006543,
+    "micro_bench_cpu_xgb": NaN
+  },
+  "peak_mem_gb_nvidia_smi": 2.27734375,
+  "oof_global_metrics": {
+    "rmse": 1.0164553483161014,
+    "mae": 0.3353806030273437,
+    "r2": 0.9991793696566673
+  }
+}
